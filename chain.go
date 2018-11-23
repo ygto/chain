@@ -1,24 +1,22 @@
 package chain
 
+
 type ChainParamType map[string]interface{}
 
 type Chain struct {
 	ok      bool
 	next    *Chain
 	preview *Chain
-	params  ChainParamType
 	process func(ChainParamType) (interface{}, bool)
 	recover func(ChainParamType, interface{}) bool
 }
 
-func NewChain(params ChainParamType) *Chain {
+func NewChain() *Chain {
 	c := new(Chain)
 	c.ok = false
-	c.params = params
 
 	return c
 }
-
 
 func (c *Chain) Chain(newChain *Chain) *Chain {
 	c.next = newChain
@@ -46,14 +44,14 @@ func (c *Chain) RunRecover(params ChainParamType, result interface{}) bool {
 	return false
 }
 
-func (c *Chain) Run() (interface{}, bool) {
-	result, ok := c.process(c.params)
+func (c *Chain) Run(params ChainParamType) (interface{}, bool) {
+	result, ok := c.process(params)
 
 	if ok {
 
 		//preview recover
 		if c.preview != nil {
-			c.preview.RunRecover(c.params, result)
+			c.preview.RunRecover(params, result)
 		}
 
 		return result, ok
@@ -61,7 +59,7 @@ func (c *Chain) Run() (interface{}, bool) {
 
 	if c.next != nil {
 
-		return c.next.Run()
+		return c.next.Run(params)
 	}
 
 	return nil, false
