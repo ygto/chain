@@ -52,8 +52,7 @@ func (c *Chain) Run() (interface{}, bool) {
 	if ok {
 
 		//preview recover
-		if c.preview != nil && c.preview.recover != nil {
-			fmt.Println("RECOVER")
+		if c.preview != nil {
 			c.preview.RunRecover(c.params, result)
 		}
 
